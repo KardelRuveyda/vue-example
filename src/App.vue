@@ -2,35 +2,16 @@
   <div class="app-container">
     <div id="app">
       <PageHeader title="To Do App" />
-      <div class="create-item">
-        <div class="create-item-text">Title :</div>
-        <div class="create-item-input">
-          <input type="text" placeholder="Enter your task title." />
-        </div>
-        <div class="create-item-button"><button>Add</button></div>
-      </div>
+      <CreateItem :itemText="itemText" @add:item="onAddItem" />
       <div class="list">
-        <div class="list-header">Total item count: 3, completed: 1</div>
-        <div class="list-row">
-          <div class="item-checkbox"><input type="checkbox" /></div>
-          <div class="item-id">1</div>
-          <div class="item-text">Write code</div>
-          <div class="item-date">15.11.2023<br />09:00</div>
-          <div class="item-delete-button"><button>Delete</button></div>
-        </div>
-        <div class="list-row completed">
-          <div class="item-checkbox"><input type="checkbox" checked /></div>
-          <div class="item-id">2</div>
-          <div class="item-text">Refactor code</div>
-          <div class="item-date">15.11.2023<br />09:00</div>
-          <div class="item-delete-button"><button>Delete</button></div>
-        </div>
-        <div class="list-row">
-          <div class="item-checkbox"><input type="checkbox" /></div>
-          <div class="item-id">5</div>
-          <div class="item-text">Delete code</div>
-          <div class="item-date">15.11.2023<br />09:00</div>
-          <div class="item-delete-button"><button>Delete</button></div>
+        <div class="list-header">Total item count: {{ itemCount }}, 
+        completed: {{ completedItemCount }}</div>
+        <div :class="'list-row' + (item.isCompleted ? ' completed ' : '')" v-for="(item,index) in items">
+          <div class="item-checkbox"><input type="checkbox" v-model="item.isCompleted" /></div>
+          <div class="item-id">{{item.id}}</div>
+          <div class="item-text">{{ item.text }}</div>
+          <div class="item-date">{{ item.createdDate.toLocaleDateString() }}</div>
+          <div class="item-delete-button"><button @click="onDeleteClick(index)" :title="index">Delete</button></div>
         </div>
       </div>
     </div>
@@ -40,14 +21,50 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import PageHeader from './components/PageHeader.vue';
+import {ToDoItem} from './services';
+import CreateItem from './components/CreateItem.vue';
 
 @Component({
   components: {
-    PageHeader, // PageHeader component'ını burada kaydedin
+    PageHeader,
+    CreateItem
   },
 })
 
-export default class App extends Vue {}
+export default class App extends Vue {
+  pageTitle = "To Do App";
+
+  itemText = "";
+  nextId=1;
+  
+
+  items:ToDoItem[] =[];
+
+
+ get itemCount(){
+   return this.items.length;
+ }
+
+get completedItemCount(){
+  return this.items.filter(x=>x.isCompleted).length;
+}
+  onAddItem(itemText: string){
+    console.log(itemText);
+    this.items.push(
+      {
+         id:this.nextId++,
+         text:itemText,
+         createdDate:new Date(),
+         isCompleted:false});
+  }
+onDeleteClick(index: number) {
+  const find = this.items.findIndex(item => item.id === index);
+
+  if (index > -1) {
+    this.items.splice(index, 1);
+  }
+}
+}
 </script>
 
 <style lang="scss">
@@ -70,42 +87,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
     background-color: rgb(232, 247, 221);
     color: #2c3e50;
-
-    .create-item {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      padding: 5px;
-
-      div {
-        padding: 0 5px 0 5px;
-      }
-
-      .create-item-input {
-        display: flex;
-        flex: 1;
-
-        input[type='text'] {
-          flex: 1;
-          font-family: Roboto, Helvetica, Arial, sans-serif;
-          font-size: 12pt;
-          padding: 10px;
-          border: 1px solid #ccc;
-          border-radius: 10px;
-        }
-      }
-
-      .create-item-button {
-        display: flex;
-
-        button {
-          font-family: Roboto, Helvetica, Arial, sans-serif;
-          font-size: 12pt;
-          padding: 10px;
-        }
-      }
-    }
 
     .list {
       display: flex;
@@ -165,7 +146,6 @@ body {
 
         &.completed {
           color: #444;
-
           .item-id,
           .item-text {
             text-decoration: line-through;
