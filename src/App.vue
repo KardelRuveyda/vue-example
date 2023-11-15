@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div id="app">
-      <PageHeader />
+      <PageHeader title="To Do App" />
       <div class="create-item">
         <div class="create-item-text">Title :</div>
         <div class="create-item-input">

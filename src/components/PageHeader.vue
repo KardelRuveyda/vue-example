@@ -5,11 +5,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import Vue from 'vue';
+import { Prop, Component } from 'vue-property-decorator';
 
 @Component
 export default class PageHeader extends Vue {
-  @Prop()
+  @Prop({ default: () => 'ToDo' })
   title!: string;
 }
 </script>
