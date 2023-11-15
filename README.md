@@ -2,6 +2,8 @@
 
 This is a basic ToDo app developed using Vue.js. The app allows users to add, delete, and mark tasks as completed.
 
+![image](https://github.com/KardelRuveyda/vue-todo-app/assets/33912144/0fab09c0-ea8e-4525-97ec-6b4c7805d16a)
+
 ## Features
 
 - Add tasks by typing in the input and clicking the "Add" button or pressing Enter.
